@@ -14,7 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      mass_assignments: {
+        Row: {
+          part: Database["public"]["Enums"]["mass_part"]
+          song_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          part: Database["public"]["Enums"]["mass_part"]
+          song_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          part?: Database["public"]["Enums"]["mass_part"]
+          song_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mass_assignments_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      songs: {
+        Row: {
+          created_at: string
+          file_path: string
+          file_type: string
+          id: string
+          original_name: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          file_path: string
+          file_type: string
+          id?: string
+          original_name?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string
+          file_type?: string
+          id?: string
+          original_name?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +75,16 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      mass_part:
+        | "inizio"
+        | "kyrie"
+        | "gloria"
+        | "alleluja"
+        | "offertorio"
+        | "santo"
+        | "agnello"
+        | "comunione"
+        | "fine"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +211,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      mass_part: [
+        "inizio",
+        "kyrie",
+        "gloria",
+        "alleluja",
+        "offertorio",
+        "santo",
+        "agnello",
+        "comunione",
+        "fine",
+      ],
+    },
   },
 } as const
