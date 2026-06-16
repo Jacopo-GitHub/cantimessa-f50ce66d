@@ -96,22 +96,3 @@
     0 1px 2px rgba(0,0,0,0.06),
     0 20px 50px -10px rgba(80, 50, 20, 0.25);
 }
-
-@utility text-gold {
-  color: var(--gold);
-}
-@utility bg-gold {
-  background-color: var(--gold);
-}
-@utility border-gold {
-  border-color: var(--gold);
-}
-@utility text-gold-deep {
-  color: var(--gold-deep);
-}
-@utility bg-gold-deep {
-  background-color: var(--gold-deep);
-}
-@utility bg-ivory {
-  background-color: var(--ivory);
-}
