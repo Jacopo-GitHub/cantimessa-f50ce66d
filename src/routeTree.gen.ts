@@ -9,27 +9,87 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MessaRouteImport } from './routes/messa'
+import { Route as CantiRouteImport } from './routes/canti'
+import { Route as IndexRouteImport } from './routes/index'
 
-export interface FileRoutesByFullPath {}
-export interface FileRoutesByTo {}
+const MessaRoute = MessaRouteImport.update({
+  id: '/messa',
+  path: '/messa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CantiRoute = CantiRouteImport.update({
+  id: '/canti',
+  path: '/canti',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/canti': typeof CantiRoute
+  '/messa': typeof MessaRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/canti': typeof CantiRoute
+  '/messa': typeof MessaRoute
+}
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/canti': typeof CantiRoute
+  '/messa': typeof MessaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: never
+  fullPaths: '/' | '/canti' | '/messa'
   fileRoutesByTo: FileRoutesByTo
-  to: never
-  id: '__root__'
+  to: '/' | '/canti' | '/messa'
+  id: '__root__' | '/' | '/canti' | '/messa'
   fileRoutesById: FileRoutesById
 }
-export interface RootRouteChildren {}
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  CantiRoute: typeof CantiRoute
+  MessaRoute: typeof MessaRoute
 }
 
-const rootRouteChildren: RootRouteChildren = {}
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/messa': {
+      id: '/messa'
+      path: '/messa'
+      fullPath: '/messa'
+      preLoaderRoute: typeof MessaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/canti': {
+      id: '/canti'
+      path: '/canti'
+      fullPath: '/canti'
+      preLoaderRoute: typeof CantiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  CantiRoute: CantiRoute,
+  MessaRoute: MessaRoute,
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
