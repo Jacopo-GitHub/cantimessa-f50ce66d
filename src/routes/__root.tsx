@@ -79,10 +79,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Canti della Messa — Repertorio del coro" },
       { name: "description", content: "Carica e organizza i canti liturgici del coro: accordi e spartiti in PDF, immagine o DOCX, scelti per ogni parte della messa." },
-      { property: "og:title", content: "Canti della Messa" },
-      { property: "og:description", content: "Repertorio digitale dei canti liturgici, organizzato per parte della messa." },
+      { property: "og:title", content: "Canti della Messa — Repertorio del coro" },
+      { property: "og:description", content: "Carica e organizza i canti liturgici del coro: accordi e spartiti in PDF, immagine o DOCX, scelti per ogni parte della messa." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Canti della Messa — Repertorio del coro" },
+      { name: "twitter:description", content: "Carica e organizza i canti liturgici del coro: accordi e spartiti in PDF, immagine o DOCX, scelti per ogni parte della messa." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/7DGcEAEicGb7dCKNcBCUaOxuGzZ2/social-images/social-1781605535981-images.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/7DGcEAEicGb7dCKNcBCUaOxuGzZ2/social-images/social-1781605535981-images.webp" },
     ],
     links: [
       {
