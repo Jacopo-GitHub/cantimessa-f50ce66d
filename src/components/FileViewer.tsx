@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { X, Download, Loader2 } from "lucide-react";
 import { getSignedUrl, type Song } from "@/lib/songs";
 import mammoth from "mammoth/mammoth.browser";
+import { PdfCanvasViewer } from "./PdfCanvasViewer";
 
 export function FileViewer({ song, onClose }: { song: Song | null; onClose: () => void }) {
   const [url, setUrl] = useState<string | null>(null);
@@ -100,11 +101,7 @@ export function FileViewer({ song, onClose }: { song: Song | null; onClose: () =
             <div className="p-8 text-destructive">Errore: {error}</div>
           )}
           {!loading && !error && url && song.file_type === "pdf" && (
-            <iframe
-              src={`${url}#view=FitH`}
-              className="w-full h-full border-0 bg-white"
-              title={song.title}
-            />
+            <PdfCanvasViewer url={url} />
           )}
           {!loading && !error && url && song.file_type === "image" && (
             <div className="w-full h-full overflow-auto bg-white grid place-items-center p-4">
