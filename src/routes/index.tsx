@@ -84,7 +84,7 @@ function Home() {
         </section>
       </main>
       <footer className="border-t border-border/60 py-6 text-center text-xs text-muted-foreground">
-        Per il coro — pace e bene.
+        Per il coro&nbsp;
       </footer>
     </div>
   );
