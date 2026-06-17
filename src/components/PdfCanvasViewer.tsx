@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
-// @ts-expect-error - worker import provided by pdfjs-dist
 import workerSrc from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
