@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { X, Download, Loader2 } from "lucide-react";
 import { getSignedUrl, type Song } from "@/lib/songs";
 import mammoth from "mammoth/mammoth.browser";
-import { PdfCanvasViewer } from "./PdfCanvasViewer";
+import { PdfCanvasViewer, ZoomToolbar } from "./PdfCanvasViewer";
 
 export function FileViewer({ song, onClose }: { song: Song | null; onClose: () => void }) {
   const [url, setUrl] = useState<string | null>(null);
   const [docxHtml, setDocxHtml] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [zoom, setZoom] = useState(1);
 
   useEffect(() => {
     if (!song) {
@@ -17,6 +18,7 @@ export function FileViewer({ song, onClose }: { song: Song | null; onClose: () =
       setError(null);
       return;
     }
+    setZoom(1);
     let cancelled = false;
     setLoading(true);
     setError(null);
@@ -104,16 +106,58 @@ export function FileViewer({ song, onClose }: { song: Song | null; onClose: () =
             <PdfCanvasViewer url={url} />
           )}
           {!loading && !error && url && song.file_type === "image" && (
-            <div className="w-full h-full overflow-auto bg-white grid place-items-center p-4">
-              <img src={url} alt={song.title} className="max-w-full h-auto" />
+            <div className="relative w-full h-full bg-white">
+              <ZoomToolbar
+                zoom={zoom}
+                onIn={() => setZoom((z) => Math.min(z * 1.25, 4))}
+                onOut={() => setZoom((z) => Math.max(z / 1.25, 0.4))}
+                onFit={() => setZoom(1)}
+              />
+              <div
+                className="w-full h-full overflow-auto p-4"
+                style={{ WebkitOverflowScrolling: "touch" }}
+              >
+                <div className="min-w-full min-h-full grid place-items-center">
+                  <img
+                    src={url}
+                    alt={song.title}
+                    style={{
+                      maxWidth: zoom === 1 ? "100%" : "none",
+                      maxHeight: zoom === 1 ? "100%" : "none",
+                      width: zoom === 1 ? "auto" : `${zoom * 100}%`,
+                      height: "auto",
+                      display: "block",
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           )}
           {!loading && !error && song.file_type === "docx" && docxHtml && (
-            <div
-              className="w-full h-full overflow-auto bg-white text-black p-8 sm:p-12 docx-content"
-              style={{ fontFamily: "Georgia, serif", lineHeight: 1.6 }}
-              dangerouslySetInnerHTML={{ __html: docxHtml }}
-            />
+            <div className="relative w-full h-full bg-white">
+              <ZoomToolbar
+                zoom={zoom}
+                onIn={() => setZoom((z) => Math.min(z * 1.25, 4))}
+                onOut={() => setZoom((z) => Math.max(z / 1.25, 0.4))}
+                onFit={() => setZoom(1)}
+              />
+              <div
+                className="w-full h-full overflow-auto bg-white text-black"
+                style={{ WebkitOverflowScrolling: "touch" }}
+              >
+                <div
+                  className="docx-content p-8 sm:p-12"
+                  style={{
+                    fontFamily: "Georgia, serif",
+                    lineHeight: 1.6,
+                    // `zoom` è supportato da Safari (incluso iOS 12) e ridimensiona
+                    // anche il layout, non solo l'aspetto come `transform: scale`.
+                    zoom: zoom,
+                  }}
+                  dangerouslySetInnerHTML={{ __html: docxHtml }}
+                />
+              </div>
+            </div>
           )}
         </div>
       </div>
