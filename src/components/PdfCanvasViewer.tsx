@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Download, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
-// Build "legacy" di pdf.js: compatibile con Safari iOS 12+.
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
-import workerSrc from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
+// Build ES5 di pdf.js: necessario per Safari/iOS 12.x.
+import * as pdfjsLib from "pdfjs-dist/es5/build/pdf";
+import workerSrc from "pdfjs-dist/es5/build/pdf.worker.js?url";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
 
@@ -28,7 +28,7 @@ export function PdfCanvasViewer({ url }: { url: string }) {
         const resp = await fetch(url);
         const buf = await resp.arrayBuffer();
         if (cancelled) return;
-        const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+        const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(buf) }).promise;
         if (cancelled) return;
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
         const availW = (scroller?.clientWidth ?? container.clientWidth) - 16;
@@ -56,7 +56,7 @@ export function PdfCanvasViewer({ url }: { url: string }) {
           const ctx = canvas.getContext("2d");
           if (!ctx) continue;
           container.appendChild(canvas);
-          await page.render({ canvasContext: ctx, viewport, canvas } as Parameters<typeof page.render>[0]).promise;
+          await page.render({ canvasContext: ctx, viewport }).promise;
         }
         if (!cancelled) setLoading(false);
       } catch (e) {
