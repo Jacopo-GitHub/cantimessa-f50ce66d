@@ -14,7 +14,26 @@ export default defineConfig({
   },
   vite: {
     build: {
+      target: ["es2017", "safari12"],
       cssTarget: "safari12",
+    },
+    esbuild: {
+      target: "es2017",
+      supported: {
+        "optional-chaining": false,
+        "nullish-coalescing": false,
+        "logical-assignment": false,
+      },
+    },
+    optimizeDeps: {
+      esbuildOptions: {
+        target: "es2017",
+        supported: {
+          "optional-chaining": false,
+          "nullish-coalescing": false,
+          "logical-assignment": false,
+        },
+      },
     },
   },
 });

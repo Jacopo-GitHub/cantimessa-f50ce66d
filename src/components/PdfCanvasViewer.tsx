@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Loader2 } from "lucide-react";
-import * as pdfjsLib from "pdfjs-dist";
-import workerSrc from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+import { Loader2, Download } from "lucide-react";
+// Build "legacy" di pdf.js: compatibile con Safari iOS 12+.
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
+import workerSrc from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
 
@@ -68,7 +69,21 @@ export function PdfCanvasViewer({ url }: { url: string }) {
           <Loader2 className="w-6 h-6 animate-spin" />
         </div>
       )}
-      {error && <div className="p-6 text-destructive">Errore: {error}</div>}
+      {error && (
+        <div className="p-6 text-center space-y-3">
+          <div className="text-destructive text-sm">
+            Impossibile mostrare il PDF su questo dispositivo.
+          </div>
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm"
+          >
+            <Download className="w-4 h-4" /> Scarica / Apri il PDF
+          </a>
+        </div>
+      )}
       <div ref={containerRef} />
     </div>
   );
