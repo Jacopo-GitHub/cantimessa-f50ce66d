@@ -14,11 +14,8 @@ export default defineConfig({
   },
   vite: {
     build: {
-      // Costringiamo Rolldown a generare codice compatibile con lo standard ES2015 e Safari 12
       target: ["es2015", "safari12"],
       cssTarget: "safari12",
-      // Utilizziamo Terser per la minificazione: è molto più affidabile di esbuild 
-      // nel ripulire e convertire la sintassi per i vecchi motori WebKit
       minify: "terser",
     },
     esbuild: {
