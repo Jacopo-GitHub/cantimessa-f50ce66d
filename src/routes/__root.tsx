@@ -113,11 +113,30 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
-
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        {/*
+          globalThis polyfill — MUST run before any other script.
+          Safari 12.0 doesn't have `globalThis` (added in Safari 12.1), and several
+          bundled dependencies (e.g. pdf.js's compatibility shim) reference
+          `globalThis` directly without a `typeof` guard. Without this, the very
+          first script tag throws `ReferenceError: Can't find variable: globalThis`
+          and the whole app fails to boot — a blank white page with nothing in the
+          DOM, since React never gets a chance to mount.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){if(typeof globalThis==='undefined'){" +
+              "if(typeof self!=='undefined'){self.globalThis=self;}" +
+              "else if(typeof window!=='undefined'){window.globalThis=window;}" +
+              "else if(typeof global!=='undefined'){global.globalThis=global;}" +
+              "else{Function('return this')().globalThis=Function('return this')();}" +
+              "}})();",
+          }}
+        />
         <HeadContent />
       </head>
       <body>
