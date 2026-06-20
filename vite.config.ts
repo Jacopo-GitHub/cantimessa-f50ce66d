@@ -5,7 +5,6 @@
 //     error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
-import legacy from "@vitejs/plugin-legacy"; // <--- IMPORTA IL PLUGIN
 
 export default defineConfig({
   tanstackStart: {
@@ -14,15 +13,13 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
-    plugins: [
-      legacy({
-        targets: ["ios >= 12", "safari >= 12"],
-        additionalLegacyPolyfills: ["regenerator-runtime/runtime"],
-      }),
-    ],
     build: {
+      // Costringiamo Rolldown a generare codice compatibile con lo standard ES2015 e Safari 12
       target: ["es2015", "safari12"],
       cssTarget: "safari12",
+      // Utilizziamo Terser per la minificazione: è molto più affidabile di esbuild 
+      // nel ripulire e convertire la sintassi per i vecchi motori WebKit
+      minify: "terser",
     },
     esbuild: {
       target: "es2015",
