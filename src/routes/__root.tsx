@@ -60,7 +60,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           >
             Try again
           </button>
-          <a
+          
             href="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
@@ -113,6 +113,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
@@ -125,6 +126,9 @@ function RootShell({ children }: { children: ReactNode }) {
           first script tag throws `ReferenceError: Can't find variable: globalThis`
           and the whole app fails to boot — a blank white page with nothing in the
           DOM, since React never gets a chance to mount.
+          Written in plain ES5 (no arrow functions, no let/const-only features
+          that could trip older parsers) so it runs even before any transpiled
+          bundle is requested.
         */}
         <script
           dangerouslySetInnerHTML={{
@@ -137,6 +141,57 @@ function RootShell({ children }: { children: ReactNode }) {
               "}})();",
           }}
         />
+
+        {/*
+          TEMPORARY — iOS 12 debug logger.
+          Catches the very first script error (the one causing the blank page)
+          and any unhandled promise rejection, then sends it via XMLHttpRequest
+          (not fetch — Safari 12 has fetch, but XHR is the safest common
+          denominator) to a temporary webhook.site inbox. Plain ES5 only,
+          runs before any bundled/transpiled script.
+          REMOVE THIS BLOCK once debugging is done.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){" +
+              "var ENDPOINT='https://webhook.site/c0866ceb-3ae5-4fe4-8ab1-ac6a3fc5259f';" +
+              "function send(payload){" +
+              "try{" +
+              "var xhr=new XMLHttpRequest();" +
+              "xhr.open('POST',ENDPOINT,true);" +
+              "xhr.setRequestHeader('Content-Type','text/plain');" +
+              "xhr.send(JSON.stringify(payload));" +
+              "}catch(e){}" +
+              "}" +
+              "function info(){" +
+              "var ua='';try{ua=navigator.userAgent;}catch(e){}" +
+              "return {ua:ua,url:String(location.href),time:new Date().toString()};" +
+              "}" +
+              "if(typeof window!=='undefined'&&window.addEventListener){" +
+              "window.addEventListener('error',function(ev){" +
+              "var d=info();" +
+              "d.kind='error';" +
+              "d.message=ev&&ev.message?String(ev.message):'unknown error';" +
+              "d.source=ev&&ev.filename?String(ev.filename):'';" +
+              "d.lineno=ev&&ev.lineno?ev.lineno:0;" +
+              "d.colno=ev&&ev.colno?ev.colno:0;" +
+              "try{d.stack=ev&&ev.error&&ev.error.stack?String(ev.error.stack):'';}catch(e){d.stack='';}" +
+              "send(d);" +
+              "});" +
+              "window.addEventListener('unhandledrejection',function(ev){" +
+              "var d=info();" +
+              "d.kind='unhandledrejection';" +
+              "try{d.message=ev&&ev.reason?String(ev.reason.message||ev.reason):'unknown rejection';}catch(e){d.message='unknown rejection';}" +
+              "try{d.stack=ev&&ev.reason&&ev.reason.stack?String(ev.reason.stack):'';}catch(e){d.stack='';}" +
+              "send(d);" +
+              "});" +
+              "}" +
+              "send((function(){var d=info();d.kind='boot';d.message='inline script reached';return d;})());" +
+              "})();",
+          }}
+        />
+
         <HeadContent />
       </head>
       <body>
