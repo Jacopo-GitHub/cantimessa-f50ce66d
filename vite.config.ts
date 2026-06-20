@@ -5,6 +5,7 @@
 //     error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import legacy from "@vitejs/plugin-legacy"; // <--- IMPORTA IL PLUGIN
 
 export default defineConfig({
   tanstackStart: {
@@ -13,12 +14,18 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    plugins: [
+      legacy({
+        targets: ["ios >= 12", "safari >= 12"],
+        additionalLegacyPolyfills: ["regenerator-runtime/runtime"],
+      }),
+    ],
     build: {
-      target: ["es2017", "safari12"],
+      target: ["es2015", "safari12"],
       cssTarget: "safari12",
     },
     esbuild: {
-      target: "es2017",
+      target: "es2015",
       supported: {
         "optional-chaining": false,
         "nullish-coalescing": false,
@@ -27,7 +34,7 @@ export default defineConfig({
     },
     optimizeDeps: {
       esbuildOptions: {
-        target: "es2017",
+        target: "es2015",
         supported: {
           "optional-chaining": false,
           "nullish-coalescing": false,
