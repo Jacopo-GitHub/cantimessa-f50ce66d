@@ -12,6 +12,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  nitro: true,
   vite: {
     build: {
       target: ["es2015", "safari12"],
